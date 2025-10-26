@@ -159,15 +159,15 @@ class GrokLLMAgent(BaseAgent):
     def _prepare_request(self, query: str, context: Optional[Dict[str, Any]]) -> GrokRequest:
         """Prepara request para o LLM com contexto e system prompt."""
         
-        # System prompt para análise de dados
-        system_prompt = """Você é um especialista em análise de dados e detecção de fraudes.
+        # System prompt para análise de dados (genérico para múltiplos domínios)
+        system_prompt = """Você é um especialista em análise de dados e insights de negócio.
         
 Suas responsabilidades:
 - Analisar dados CSV e identificar padrões
-- Detectar anomalias e possíveis fraudes
+- Detectar anomalias e outliers nos dados
 - Fornecer insights estratégicos baseados em dados
 - Explicar correlações e tendências
-- Sugerir ações para melhorar segurança
+- Sugerir ações para melhorar processos
 
 Diretrizes:
 - Seja preciso e baseie-se nos dados fornecidos
@@ -188,10 +188,6 @@ Diretrizes:
             if "data_info" in context:
                 data_info = context["data_info"]
                 prompt_parts.append(f"Dimensões: {data_info.get('rows', 'N/A')} linhas × {data_info.get('columns', 'N/A')} colunas")
-            
-            if "fraud_data" in context:
-                fraud_info = context["fraud_data"] 
-                prompt_parts.append(f"Fraudes: {fraud_info.get('count', 0)} de {fraud_info.get('total', 0)} transações")
             
             # Adicionar consulta do usuário
             prompt_parts.extend(["\nConsulta do usuário:", query])
@@ -281,27 +277,6 @@ Por favor, forneça:
 Formato: Use markdown para estruturar a resposta de forma clara."""
         
         context = {"analysis_type": "data_insights", "data_summary": data_summary}
-        
-        return self.process(prompt, context)
-
-    def detect_fraud_patterns(self, fraud_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Analisa padrões de fraude e fornece insights especializados."""
-        
-        prompt = f"""Analise os padrões de fraude encontrados nos dados:
-
-DADOS DE FRAUDE:
-{json.dumps(fraud_data, indent=2, ensure_ascii=False)}
-
-Forneça uma análise detalhada incluindo:
-1. **Padrões de Fraude**: Características principais das transações fraudulentas
-2. **Indicadores de Risco**: Variáveis mais importantes para detecção
-3. **Segmentação**: Grupos de risco identificados
-4. **Prevenção**: Estratégias para reduzir fraudes
-5. **Monitoramento**: KPIs e alertas recomendados
-
-Use dados concretos e seja específico nas recomendações."""
-        
-        context = {"analysis_type": "fraud_detection", "fraud_data": fraud_data}
         
         return self.process(prompt, context)
 

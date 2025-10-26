@@ -18,7 +18,7 @@ class AgentRole(Enum):
     CSV_ANALYST = "csv_analyst"
     RAG_SPECIALIST = "rag_specialist"
     DATA_SCIENTIST = "data_scientist"
-    FRAUD_DETECTIVE = "fraud_detective"
+    # FRAUD_DETECTIVE removido - sistema genérico
 
 
 class PromptType(Enum):
@@ -143,32 +143,7 @@ Colunas: {columns_summary}
                 variables=[]
             ),
             
-            "fraud_detection_context": PromptTemplate(
-                role=AgentRole.CSV_ANALYST,
-                type=PromptType.CONTEXT,
-                content="""🔍 **CONTEXTO DE DETECÇÃO DE FRAUDE**
-
-Este dataset contém transações financeiras para análise de fraude.
-
-📋 **CARACTERÍSTICAS TÍPICAS DE FRAUDE**:
-- Valores atípicos (muito altos ou baixos)
-- Padrões temporais suspeitos
-- Correlações anômalas entre variáveis
-- Outliers em múltiplas dimensões
-
-🎯 **ANÁLISES RECOMENDADAS**:
-- Distribuição da variável target (Class/fraud)
-- Correlações entre features
-- Análise de outliers em Amount
-- Padrões temporais em Time
-- Balanceamento das classes
-
-⚠️ **CUIDADOS**:
-- Dados podem estar normalizados (PCA)
-- Classes tipicamente desbalanceadas
-- Features V1-V28 são anônimas por segurança""",
-                variables=[]
-            ),
+            # Template "fraud_detection_context" removido - sistema genérico
             
             "data_types_analysis": PromptTemplate(
                 role=AgentRole.CSV_ANALYST,

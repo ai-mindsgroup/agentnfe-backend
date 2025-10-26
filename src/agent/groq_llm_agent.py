@@ -178,15 +178,15 @@ class GroqLLMAgent(BaseAgent):
     def _prepare_request(self, query: str, context: Optional[Dict[str, Any]]) -> GroqRequest:
         """Prepara request para o LLM com contexto e system prompt."""
         
-        # System prompt para análise de dados
-        system_prompt = """Você é um especialista em análise de dados e detecção de fraudes.
+        # System prompt para análise de dados (genérico para múltiplos domínios)
+        system_prompt = """Você é um especialista em análise de dados e insights de negócio.
         
 Suas responsabilidades:
 - Analisar dados CSV e identificar padrões
-- Detectar anomalias e possíveis fraudes
+- Detectar anomalias e outliers nos dados
 - Fornecer insights estratégicos baseados em dados
 - Explicar correlações e tendências
-- Sugerir ações para melhorar segurança
+- Sugerir ações para melhorar processos
 
 Diretrizes:
 - Seja preciso e baseie-se nos dados fornecidos
@@ -207,10 +207,6 @@ Diretrizes:
             if "data_info" in context:
                 data_info = context["data_info"]
                 prompt_parts.append(f"Dimensões: {data_info.get('rows', 'N/A')} linhas × {data_info.get('columns', 'N/A')} colunas")
-            
-            if "fraud_data" in context:
-                fraud_info = context["fraud_data"] 
-                prompt_parts.append(f"Fraudes: {fraud_info.get('count', 0)} de {fraud_info.get('total', 0)} transações")
             
             # Adicionar consulta do usuário
             prompt_parts.extend(["\nConsulta do usuário:", query])
@@ -369,23 +365,6 @@ Diretrizes:
         """
         
         return self.process(query, {"data_summary": data_summary})
-
-    def detect_fraud_patterns(self, fraud_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Detecta padrões de fraude nos dados."""
-        query = f"""
-        Analise os seguintes dados de fraude e identifique padrões:
-        
-        Dados de fraude:
-        {json.dumps(fraud_data, indent=2, ensure_ascii=False)}
-        
-        Identifique:
-        1. Padrões comuns em transações fraudulentas
-        2. Fatores de risco principais
-        3. Estratégias de prevenção
-        4. Indicadores de alerta precoce
-        """
-        
-        return self.process(query, {"fraud_data": fraud_data})
 
     def explain_correlations(self, correlation_matrix: Dict[str, Any]) -> Dict[str, Any]:
         """Explica correlações encontradas nos dados."""

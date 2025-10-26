@@ -375,11 +375,11 @@ class DataLoader:
             self.logger.error(error_msg)
             raise DataLoaderError(error_msg) from e
     
-    def create_synthetic_data(self, data_type: str = "fraud_detection", num_rows: int = 1000, **kwargs) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    def create_synthetic_data(self, data_type: str = "generic", num_rows: int = 1000, **kwargs) -> Tuple[pd.DataFrame, Dict[str, Any]]:
         """Cria dados sintéticos para testes e demonstrações.
         
         Args:
-            data_type: Tipo de dados sintéticos ('fraud_detection', 'sales', 'customer', 'generic')
+            data_type: Tipo de dados sintéticos ('sales', 'customer', 'generic')
             num_rows: Número de linhas a gerar
             **kwargs: Argumentos específicos para cada tipo de dados
             
@@ -398,16 +398,14 @@ class DataLoader:
         seed = kwargs.get('seed', 42)
         np.random.seed(seed)
         
-        if data_type == "fraud_detection":
-            df = self._create_fraud_data(num_rows, **kwargs)
-        elif data_type == "sales":
+        if data_type == "sales":
             df = self._create_sales_data(num_rows, **kwargs)
         elif data_type == "customer":
             df = self._create_customer_data(num_rows, **kwargs)
         elif data_type == "generic":
             df = self._create_generic_data(num_rows, **kwargs)
         else:
-            raise DataLoaderError(f"Tipo de dados sintéticos não suportado: {data_type}")
+            raise DataLoaderError(f"Tipo de dados sintéticos não suportado: {data_type}. Opções: 'sales', 'customer', 'generic'")
         
         # Informações do carregamento
         load_info = {
@@ -462,35 +460,8 @@ class DataLoader:
             self.logger.warning(f"Erro na detecção de encoding: {str(e)}, usando utf-8")
             return 'utf-8'
     
-    def _create_fraud_data(self, num_rows: int, **kwargs) -> pd.DataFrame:
-        """Gera dados sintéticos para detecção de fraude."""
-        fraud_rate = kwargs.get('fraud_rate', 0.05)  # 5% de fraude por padrão
-        
-        data = {
-            'transaction_id': range(1, num_rows + 1),
-            'amount': np.random.lognormal(4, 1.2, num_rows),
-            'merchant_category': np.random.choice(['grocery', 'gas', 'restaurant', 'online', 'pharmacy', 'retail'], num_rows),
-            'hour': np.random.randint(0, 24, num_rows),
-            'day_of_week': np.random.randint(1, 8, num_rows),
-            'customer_age': np.random.normal(40, 12, num_rows).astype(int).clip(18, 80),
-            'account_balance': np.random.normal(3000, 1500, num_rows).clip(0, None),
-            'transactions_today': np.random.poisson(2, num_rows),
-            'is_weekend': np.random.choice([0, 1], num_rows, p=[0.71, 0.29]),
-            'distance_from_home': np.random.exponential(5, num_rows),
-        }
-        
-        # Lógica de fraude sofisticada
-        fraud_prob = np.zeros(num_rows)
-        fraud_prob += (data['amount'] > np.percentile(data['amount'], 95)) * 0.4
-        fraud_prob += ((data['hour'] >= 2) & (data['hour'] <= 6)) * 0.3
-        fraud_prob += (data['transactions_today'] > 8) * 0.5
-        fraud_prob += (data['distance_from_home'] > 50) * 0.3
-        
-        # Aplicar taxa de fraude desejada
-        fraud_prob = fraud_prob * (fraud_rate / fraud_prob.mean())
-        data['is_fraud'] = np.random.binomial(1, np.clip(fraud_prob, 0, 1), num_rows)
-        
-        return pd.DataFrame(data)
+    
+    # Método _create_fraud_data() removido - não necessário para MVP fiscal
     
     def _create_sales_data(self, num_rows: int, **kwargs) -> pd.DataFrame:
         """Gera dados sintéticos de vendas."""

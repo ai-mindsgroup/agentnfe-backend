@@ -432,7 +432,8 @@ class StatisticsGuardrails:
     def _extract_class_percentages(self, content: str) -> Optional[Tuple[float, float]]:
         """Extrai percentuais das classes 0 e 1"""
         class_0_match = re.search(r'(?:class\s*0|normal)[:\s]*(\d+(?:[,.]\d+)?)\s*%', content, re.IGNORECASE)
-        class_1_match = re.search(r'(?:class\s*1|fraude)[:\s]*(\d+(?:[,.]\d+)?)\s*%', content, re.IGNORECASE)
+        # Busca genérica para class 1 (sem menção a fraude)
+        class_1_match = re.search(r'class\s*1[:\s]*(\d+(?:[,.]\d+)?)\s*%', content, re.IGNORECASE)
         
         if class_0_match and class_1_match:
             class_0_pct = float(class_0_match.group(1).replace(',', '.'))
@@ -497,11 +498,12 @@ class StatisticsGuardrails:
         content_lower = content.lower()
         
         # Verificar se há menção a elementos comuns em descrições de datasets
+        # Keywords genéricas removendo menções específicas a fraude/cartão
         semantic_indicators = [
             'features', 'colunas', 'columns', 'transações', 'dataset',
             'v1', 'v2', 'v3', 'pca', 'time', 'amount', 'class',
-            'fraude', 'fraud', 'cartão', 'crédito', 'credit', 'card',
-            'numérico', 'categórico', 'temporal', 'numeric', 'categorical'
+            'numérico', 'categórico', 'temporal', 'numeric', 'categorical',
+            'variáveis', 'dados', 'valores', 'registros'
         ]
         
         # Contar quantos indicadores semânticos estão presentes

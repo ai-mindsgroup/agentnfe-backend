@@ -35,7 +35,7 @@ Olá! Aqui está uma análise dos tipos de variáveis presentes no seu conjunto 
 
 **Variáveis Categóricas**
 
-- Class: Variável categórica com valores possíveis 0 e 1. Utilizada para indicar fraude ou não fraude.
+- Class: Variável categórica com valores possíveis 0 e 1.
 
 **Estatísticas relevantes (coluna Amount):**
 - Média: R$ [valor]
@@ -149,10 +149,8 @@ def synthesize_response(chunks, question, use_llm=True):
         if cat_vars:
             resposta += "**Variáveis Categóricas**\n\n"
             for var in cat_vars:
-                if var == 'Class':
-                    resposta += "- Class: Variável categórica com valores possíveis 0 e 1. Utilizada para indicar fraude ou não fraude.\n"
-                else:
-                    resposta += f"- {var}\n"
+                # Descrição genérica para todas as variáveis categóricas
+                resposta += f"- {var}\n"
             resposta += "\n"
         
         # Estatísticas
