@@ -77,14 +77,14 @@ class TestOrchestratorMemoryIntegration:
         orchestrator_agent.csv_agent = AsyncMock()
         orchestrator_agent.rag_agent = AsyncMock()
         
-        # Mock do método de processamento LLM
+                # Mock do método de processamento LLM
         with patch.object(orchestrator_agent, '_process_with_llm') as mock_llm:
             mock_llm.return_value = "Resposta do LLM com contexto de memória"
             
             # Processar query
             result = await orchestrator_agent.process_query(
-                "Quais são os padrões de fraude mais comuns?",
-                context={"dataset": "creditcard.csv"}
+                "Quais são as principais tendências nos dados?",
+                context={"dataset": "demo_transacoes.csv"}
             )
             
             # Verificar que a query foi lembrada
@@ -103,18 +103,18 @@ class TestOrchestratorMemoryIntegration:
             "recent_conversations": [
                 {
                     "type": "query",
-                    "content": "Carregue o dataset de fraudes",
+                    "content": "Carregue o dataset de transações",
                     "timestamp": "2024-01-01T10:00:00"
                 },
                 {
                     "type": "response", 
-                    "content": "Dataset carregado com 284,807 transações",
+                    "content": "Dataset carregado com dados de transações",
                     "timestamp": "2024-01-01T10:00:05"
                 }
             ],
             "data_context": {
-                "current_dataset": "creditcard.csv",
-                "dataset_info": {"rows": 284807, "columns": 31}
+                "current_dataset": "demo_transacoes.csv",
+                "dataset_info": {"rows": 1000, "columns": 10}
             }
         }
         
@@ -136,7 +136,7 @@ class TestOrchestratorMemoryIntegration:
             # Verificar que o LLM recebeu contexto da conversa anterior
             args, kwargs = mock_llm.call_args
             prompt = args[0] if args else kwargs.get('prompt', '')
-            assert "creditcard.csv" in prompt or "dataset carregado" in prompt.lower()
+            assert "demo_transacoes.csv" in prompt or "dataset carregado" in prompt.lower()
 
 
 @pytest.mark.asyncio
@@ -173,7 +173,7 @@ class TestCSVAnalysisMemoryIntegration:
             'V1': [-1.359807, -1.340163, 1.191857, 1.315642, -1.226583],
             'V2': [-0.072781, 0.635273, 0.266151, -1.540233, 0.173225],
             'Amount': [149.62, 2.69, 378.66, 123.50, 69.99],
-            'Class': [0, 0, 0, 0, 0]
+            'Category': ['A', 'A', 'B', 'A', 'B']
         })
     
     async def test_csv_agent_analysis_caching(self, csv_agent, mock_memory_manager, sample_dataframe):
@@ -181,8 +181,8 @@ class TestCSVAnalysisMemoryIntegration:
         # Mock da análise LLM
         with patch.object(csv_agent, '_analyze_with_llm') as mock_analyze:
             mock_analyze.return_value = {
-                "summary": "Dataset com 5 transações, todas legítimas",
-                "insights": ["Todos os valores são normais", "Sem fraudes detectadas"],
+                "summary": "Dataset com 5 transações analisadas",
+                "insights": ["Todos os valores estão dentro do esperado", "Dados consistentes"],
                 "analysis_type": "statistical_summary"
             }
             
@@ -202,8 +202,8 @@ class TestCSVAnalysisMemoryIntegration:
             
             # Segunda análise - com cache
             mock_memory_manager.get_cached_analysis.return_value = {
-                "summary": "Dataset com 5 transações, todas legítimas",
-                "insights": ["Todos os valores são normais", "Sem fraudes detectadas"],
+                "summary": "Dataset com 5 transações analisadas",
+                "insights": ["Todos os valores estão dentro do esperado", "Dados consistentes"],
                 "analysis_type": "statistical_summary",
                 "from_cache": True
             }
@@ -223,15 +223,15 @@ class TestCSVAnalysisMemoryIntegration:
         """Testa aprendizado de padrões de consulta."""
         with patch.object(csv_agent, '_analyze_with_llm') as mock_analyze:
             mock_analyze.return_value = {
-                "summary": "Análise de fraudes",
-                "insights": ["Padrão suspeito encontrado"]
+                "summary": "Análise de padrões de dados",
+                "insights": ["Padrão identificado nos dados"]
             }
             
             # Executar várias análises similares
             queries = [
-                "Detectar fraudes",
-                "Analisar transações suspeitas", 
-                "Identificar padrões de fraude"
+                "Detectar padrões",
+                "Analisar tendências dos dados", 
+                "Identificar correlações importantes"
             ]
             
             for query in queries:
@@ -247,7 +247,7 @@ class TestCSVAnalysisMemoryIntegration:
             calls = mock_memory_manager.learn_query_pattern.call_args_list
             for call in calls:
                 args, kwargs = call
-                assert "fraud" in args[0].lower() or "fraude" in args[0].lower()
+                assert "padrão" in args[0].lower() or "análise" in args[0].lower() or "tendência" in args[0].lower()
 
 
 @pytest.mark.asyncio
@@ -280,14 +280,14 @@ class TestRAGMemoryIntegration:
         # Mock da busca vetorial
         with patch.object(rag_agent, '_vector_search') as mock_search:
             mock_search.return_value = [
-                {"content": "Fraude é...", "score": 0.95},
-                {"content": "Detecção de anomalias...", "score": 0.88}
+                {"content": "Documentos fiscais eletrônicos são...", "score": 0.95},
+                {"content": "Análise de conformidade tributária...", "score": 0.88}
             ]
             
             # Primeira busca - sem cache
             mock_memory_manager.get_cached_search.return_value = None
             
-            results1 = await rag_agent.search_with_memory("Como detectar fraudes?")
+            results1 = await rag_agent.search_with_memory("Como analisar documentos fiscais?")
             
             # Verificar que busca foi executada
             mock_search.assert_called_once()
@@ -298,13 +298,13 @@ class TestRAGMemoryIntegration:
             # Segunda busca - com cache
             mock_memory_manager.get_cached_search.return_value = {
                 "results": [
-                    {"content": "Fraude é...", "score": 0.95},
-                    {"content": "Detecção de anomalias...", "score": 0.88}
+                    {"content": "Documentos fiscais eletrônicos são...", "score": 0.95},
+                    {"content": "Análise de conformidade tributária...", "score": 0.88}
                 ],
                 "from_cache": True
             }
             
-            results2 = await rag_agent.search_with_memory("Como detectar fraudes?")
+            results2 = await rag_agent.search_with_memory("Como analisar documentos fiscais?")
             
             # Verificar que busca não foi executada novamente
             assert mock_search.call_count == 1
@@ -318,7 +318,7 @@ class TestRAGMemoryIntegration:
             ]
             
             # Simular feedback de relevância
-            query = "Como analisar padrões de fraude?"
+            query = "Como analisar documentos NF-e?"
             results = await rag_agent.search_with_memory(query)
             
             # Simular feedback positivo para resultado relevante
@@ -350,7 +350,7 @@ class TestRAGMemoryIntegration:
             
             # Buscar com threshold adaptativo
             results = await rag_agent.search_with_memory(
-                "Consulta sobre fraudes",
+                "Consulta sobre conformidade fiscal",
                 use_adaptive_threshold=True
             )
             
@@ -395,15 +395,15 @@ class TestMemorySystemIntegration:
         
         # Simular workflow completo
         # 1. Usuário faz pergunta
-        await orchestrator.remember_query("Carregue o dataset de fraudes e faça uma análise")
+        await orchestrator.remember_query("Carregue o dataset de transações e faça uma análise")
         
         # 2. Orchestrador delega para CSV agent
-        sample_data = pd.DataFrame({'Class': [0, 1, 0, 1], 'Amount': [100, 200, 150, 300]})
+        sample_data = pd.DataFrame({'Categoria': ['A', 'B', 'A', 'B'], 'Valor': [100, 200, 150, 300]})
         
         with patch.object(csv_agent, '_analyze_with_llm') as mock_csv_analyze:
             mock_csv_analyze.return_value = {
                 "summary": "Dataset carregado com 4 transações",
-                "fraud_rate": "50%"
+                "distribution": "50% categoria A, 50% categoria B"
             }
             
             csv_result = await csv_agent.analyze_dataframe(sample_data)
@@ -411,10 +411,10 @@ class TestMemorySystemIntegration:
         # 3. Orchestrador usa RAG para contexto adicional  
         with patch.object(rag_agent, '_vector_search') as mock_rag_search:
             mock_rag_search.return_value = [
-                {"content": "Fraudes em cartão são detectadas por...", "score": 0.92}
+                {"content": "Análise de dados transacionais permite identificar...", "score": 0.92}
             ]
             
-            rag_result = await rag_agent.search_with_memory("detecção de fraude cartão")
+            rag_result = await rag_agent.search_with_memory("análise de transações comerciais")
         
         # 4. Orchestrator combina resultados e responde
         final_response = f"Análise: {csv_result.get('summary', '')}. Contexto: {rag_result[0]['content'] if rag_result else ''}"

@@ -50,7 +50,7 @@ def test_com_dados():
     
     # Primeiro carregar dados
     print("🔄 Carregando dados...")
-    load_result = orchestrator.process("carregar arquivo data/creditcard_test_500.csv")
+    load_result = orchestrator.process("carregar arquivo data/demo_transacoes.csv")
     
     if load_result.get('metadata', {}).get('error', False):
         print(f"❌ Erro no carregamento: {load_result.get('content')}")

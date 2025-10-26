@@ -62,7 +62,7 @@ def test_com_arquivo_no_contexto():
         orchestrator = OrchestratorAgent()
         
         # Contexto com arquivo
-        context = {"file_path": "data/creditcard_test_500.csv"}
+        context = {"file_path": "data/demo_transacoes.csv"}
         query = "Quais são os tipos de dados das colunas?"
         print(f"❓ Pergunta: {query}")
         print(f"📁 Arquivo: {context['file_path']}")

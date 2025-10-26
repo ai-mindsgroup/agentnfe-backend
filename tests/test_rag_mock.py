@@ -24,17 +24,17 @@ def test_chunking_system():
         
         # Texto de exemplo
         sample_text = """
-        As fraudes em cartões de crédito são um problema crescente. 
+        A análise de documentos fiscais eletrônicos requer processamento estruturado. 
         
-        Os principais indicadores incluem:
-        - Transações em horários incomuns
-        - Mudanças súbitas de localização
-        - Valores muito acima do perfil histórico
+        Os principais componentes incluem:
+        - Extração de dados XML de NF-e
+        - Validação de campos obrigatórios
+        - Análise de conformidade tributária
         
-        Para prevenção, recomenda-se:
-        1. Machine Learning para detecção em tempo real
-        2. Análise comportamental contínua
-        3. Autenticação biométrica
+        Para processamento eficiente, recomenda-se:
+        1. Machine Learning para classificação automática
+        2. Validação de regras fiscais
+        3. Integração com sistemas ERP
         """
         
         chunker = TextChunker(chunk_size=150, overlap_size=30)
@@ -78,9 +78,9 @@ def test_embeddings_generation():
             generator = EmbeddingGenerator(EmbeddingProvider.SENTENCE_TRANSFORMER)
             
             texts = [
-                "Fraude em cartão de crédito é um problema sério",
-                "Machine learning pode detectar padrões suspeitos",
-                "Análise de dados revela insights importantes"
+                "Documentos fiscais eletrônicos seguem padrões definidos pela SEFAZ",
+                "Machine learning pode classificar tipos de operações fiscais",
+                "Análise de dados revela insights importantes sobre conformidade"
             ]
             
             print(f"📝 Gerando embeddings para {len(texts)} textos...")
@@ -130,7 +130,7 @@ def test_complete_workflow():
                 # Workflow completo
                 print("1. 📋 Chunking do texto...")
                 chunker = TextChunker(chunk_size=200, overlap_size=50)
-                text = "Esta é uma demonstração do sistema RAG. Inclui análise de fraudes, machine learning e dados."
+                text = "Esta é uma demonstração do sistema RAG. Inclui análise de documentos fiscais, machine learning e processamento de dados estruturados."
                 chunks = chunker.chunk_text(text, "test_workflow", ChunkStrategy.SENTENCE)
                 print(f"   ✅ {len(chunks)} chunks criados")
                 

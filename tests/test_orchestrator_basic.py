@@ -72,7 +72,7 @@ def test_orchestrator_basic():
     
     classification_tests = [
         "analise o arquivo dados.csv",         # CSV_ANALYSIS
-        "busque informações sobre fraude",     # RAG_SEARCH  
+        "busque informações sobre ICMS",       # RAG_SEARCH  
         "carregar dados do arquivo",           # DATA_LOADING
         "qual é a capital do Brasil?",         # GENERAL
         "xpto123 consulta estranha"           # UNKNOWN
