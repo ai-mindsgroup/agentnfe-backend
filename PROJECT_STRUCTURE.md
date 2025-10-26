@@ -84,7 +84,7 @@ agentnfe-backend/
 ├── 📁 scripts/                       # Scripts de utilidade
 │   ├── run_migrations.py            # Executar migrations
 │   ├── setup_database.py            # Configurar banco
-│   ├── ingest_creditcard.py         # Ingerir dados
+│   ├── # ingest_creditcard.py (removido) # Scripts de ingestão específicos foram removidos ou refatorados
 │   └── ...
 │
 ├── 📁 tests/                         # Testes automatizados
@@ -115,8 +115,8 @@ agentnfe-backend/
 │   └── ...
 │
 ├── 📁 data/                          # Dados de exemplo
-│   ├── creditcard_test_500.csv
-│   └── demo_transacoes.csv
+│   ├── demo_transacoes.csv
+│   └── # creditcard_test_500.csv (removido)
 │
 ├── 📁 static/                        # Arquivos estáticos
 │   └── 📁 histogramas/              # Gráficos gerados

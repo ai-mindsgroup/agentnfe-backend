@@ -30,7 +30,6 @@
 |--------|--------|-----|
 | `run_migrations.py` | Executar migrations SQL | Setup inicial |
 | `setup_database.py` | Configurar banco | Setup inicial |
-| `ingest_creditcard.py` | Carregar dados exemplo | Demonstração |
 | `clean_database.py` | Limpar embeddings | Manutenção |
 
 ### Testes (`tests/`)
@@ -48,7 +47,6 @@
 |---------|-----------|
 | `demo_csv_agent.py` | Demo básico |
 | `analise_interativa.py` | Análise interativa |
-| `fraud_detection_llm_*.py` | Detecção de fraude |
 
 ## 📖 Documentação (`docs/`)
 

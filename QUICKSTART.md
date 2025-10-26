@@ -84,8 +84,8 @@ python examples/analise_interativa_console.py
 ## 📊 Carregar Dados de Exemplo
 
 ```bash
-# Carregar dataset de exemplo (creditcard)
-python scripts/ingest_creditcard.py
+# Carregar seus próprios dados CSV
+# Use a interface web ou API para fazer upload de arquivos CSV
 
 # Verificar carga
 python -c "from src.vectorstore.supabase_client import supabase; print(supabase.table('embeddings').select('count').execute())"
@@ -152,7 +152,10 @@ tail -f logs/app-back-log-simon.log
 python scripts/clean_database.py
 
 # Recarregar dados
-python scripts/ingest_completo.py
+
+# Use scripts disponíveis para carregar seus próprios dados. Alguns scripts de ingestão
+# específicos de datasets de fraude foram removidos para focar no fluxo genérico.
+# Exemplos de utilitários úteis: `scripts/run_utils.py`, `examples/demo_data_loading.py`.
 ```
 
 ## 🐛 Solução de Problemas
