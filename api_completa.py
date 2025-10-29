@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-API Completa - EDA AI Minds com Sistema Multiagente
+API Completa - AgentNFE com Sistema Multiagente
 ==================================================
 
 # Inicialização de agentes
@@ -113,7 +113,7 @@ API_TIMEOUT = 120  # Timeout de 120 segundos para operações longas
 # Não definir PORT aqui - usar API_HOST e API_PORT de settings.py
 
 app = FastAPI(
-    title="EDA AI Minds - API Completa",
+    title="AgentNFE - API Completa",
     description="Sistema multiagente para análise inteligente de dados CSV",
     version="2.0.0",
     docs_url="/docs",
@@ -788,7 +788,7 @@ Pronto para analisar seus dados!"""
         analysis_type = "csv_analysis"
         
     else:
-        response = """🤖 **EDA AI Minds - Sistema Multiagente:**
+        response = """🤖 **AgentNFE - Sistema Multiagente:**
 
 **Status:** ✅ Operacional
 
@@ -1001,7 +1001,7 @@ def extract_recommendations(text: str) -> List[str]:
     return recommendations
 
 if __name__ == "__main__":
-    print("🚀 Iniciando API Completa - EDA AI Minds")
+    print("🚀 Iniciando API Completa - AgentNFE")
     print("=" * 50)
     print(f"📍 URL: http://localhost:{API_PORT}")
     print(f"📚 Docs: http://localhost:{API_PORT}/docs")
