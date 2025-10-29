@@ -39,6 +39,19 @@ except RuntimeError as e:
     RAGAgent = None
     print(f"⚠️ RAGAgent não disponível: {str(e)[:100]}...")
 
+# Import condicional do NFeTaxSpecialistAgent (especialista em análise fiscal)
+try:
+    from src.agent.nfe_tax_specialist_agent import NFeTaxSpecialistAgent
+    NFE_TAX_SPECIALIST_AVAILABLE = True
+except ImportError as e:
+    NFE_TAX_SPECIALIST_AVAILABLE = False
+    NFeTaxSpecialistAgent = None
+    print(f"⚠️ NFeTaxSpecialistAgent não disponível: {str(e)[:100]}...")
+except RuntimeError as e:
+    NFE_TAX_SPECIALIST_AVAILABLE = False  
+    NFeTaxSpecialistAgent = None
+    print(f"⚠️ NFeTaxSpecialistAgent não disponível: {str(e)[:100]}...")
+
 # Import do cliente Supabase para verificação de dados
 try:
     from src.vectorstore.supabase_client import supabase
@@ -139,6 +152,7 @@ class OrchestratorAgent(BaseAgent):
     def __init__(self, 
                  enable_csv_agent: bool = True,
                  enable_rag_agent: bool = True,
+                 enable_nfe_tax_specialist: bool = True,
                  enable_llm_manager: bool = True,
                  enable_data_processor: bool = True):
         """Inicializa o orquestrador com agentes especializados.
@@ -146,6 +160,7 @@ class OrchestratorAgent(BaseAgent):
         Args:
             enable_csv_agent: Habilitar agente de análise CSV
             enable_rag_agent: Habilitar agente RAG
+            enable_nfe_tax_specialist: Habilitar agente especialista em análise fiscal de NF-e
             enable_llm_manager: Habilitar LLM Manager (camada de abstração para múltiplos LLMs)
             enable_data_processor: Habilitar processador de dados
         """
@@ -207,6 +222,20 @@ class OrchestratorAgent(BaseAgent):
                 self.logger.warning(f"⚠️ {error_msg}")
         elif enable_rag_agent and not RAG_AGENT_AVAILABLE:
             error_msg = "RAG Agent: Dependências não disponíveis (Supabase não configurado)"
+            initialization_errors.append(error_msg)
+            self.logger.warning(f"⚠️ {error_msg}")
+
+        # NFe Tax Specialist Agent (especialista em análise fiscal de NF-e)
+        if enable_nfe_tax_specialist and NFE_TAX_SPECIALIST_AVAILABLE:
+            try:
+                self.agents["nfe_tax"] = NFeTaxSpecialistAgent()
+                self.logger.info("✅ Agente NFe Tax Specialist inicializado - análise fiscal de NF-e")
+            except Exception as e:
+                error_msg = f"NFe Tax Specialist Agent: {str(e)}"
+                initialization_errors.append(error_msg)
+                self.logger.warning(f"⚠️ {error_msg}")
+        elif enable_nfe_tax_specialist and not NFE_TAX_SPECIALIST_AVAILABLE:
+            error_msg = "NFe Tax Specialist Agent: Dependências não disponíveis"
             initialization_errors.append(error_msg)
             self.logger.warning(f"⚠️ {error_msg}")
 

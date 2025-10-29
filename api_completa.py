@@ -322,7 +322,7 @@ async def health_check():
     agents_available = []
     
     if MULTIAGENT_AVAILABLE:
-        agents_available = ["csv_analyzer", "embeddings_analyzer"]
+        agents_available = ["csv_analyzer", "embeddings_analyzer", "nfe_tax_specialist"]
         if orchestrator:
             agents_available.append("orchestrator")
     
@@ -1014,6 +1014,7 @@ if __name__ == "__main__":
         print("   • Analisador de CSV")
         print("   • Sistema de Embeddings")
         print("   • Detecção de Fraude IA")
+        print("   • Especialista Fiscal NF-e")
     print("⏹️ Pressione Ctrl+C para parar")
     print()
     
