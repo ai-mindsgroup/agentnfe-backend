@@ -114,8 +114,8 @@ API_TIMEOUT = 120  # Timeout de 120 segundos para operações longas
 
 app = FastAPI(
     title="EDA AI Minds - API Completa",
-    description="Sistema multiagente para análise inteligente de dados CSV",
-    version="2.0.0",
+    description="Sistema multiagente para análise inteligente de dados CSV e NF-e",
+    version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
     timeout=API_TIMEOUT  # Timeout configurável
@@ -129,6 +129,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================================
+# IMPORTAR E REGISTRAR ROUTER NFE
+# ============================================================================
+NFE_ROUTER_AVAILABLE = False
+try:
+    from app.routers.nfe import router as nfe_router
+    app.include_router(nfe_router)
+    NFE_ROUTER_AVAILABLE = True
+    logger.info("✅ Router NFe Tax Specialist incluído")
+except ImportError as e:
+    logger.warning(f"⚠️ Router NFe não disponível: {e}")
+except Exception as e:
+    logger.error(f"❌ Erro ao carregar router NFe: {e}")
 
 # Modelos Pydantic
 class HealthResponse(BaseModel):
@@ -326,10 +340,14 @@ async def health_check():
         if orchestrator:
             agents_available.append("orchestrator")
     
+    # Adicionar agente NFe se disponível
+    if NFE_ROUTER_AVAILABLE:
+        agents_available.append("nfe_tax_specialist")
+    
     return HealthResponse(
         status="healthy",
         timestamp=datetime.now().isoformat(),
-        message="API completa operacional com sistema multiagente",
+        message="API completa operacional com sistema multiagente e NFe Tax Specialist",
         multiagent_status=MULTIAGENT_AVAILABLE,
         agents_available=agents_available
     )
@@ -340,10 +358,11 @@ async def health_check_detailed():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "version": "2.0.0",
+        "version": "2.1.0",
         "timeout_config": API_TIMEOUT,
         "components": {
             "multiagent_system": MULTIAGENT_AVAILABLE,
+            "nfe_router": NFE_ROUTER_AVAILABLE,
             "orchestrator_available": ORCHESTRATOR_AVAILABLE,
             "orchestrator_loaded": orchestrator is not None,
             "llm_router": LLM_ROUTER_AVAILABLE,
