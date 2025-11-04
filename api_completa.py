@@ -1,33 +1,15 @@
 #!/usr/bin/env python3
 """
-API Completa - EDA AI Minds com Sistema Multiagente
-==================================================
+AgentNFe - API Multiagente para Análise de Notas Fiscais Eletrônicas
+====================================================================
 
-# Inicialização de agentes
-orchestrator = None
-csv_agent = None
-
-if MULTIAGENT_AVAILABLE:
-    try:
-        if ORCHESTRATOR_AVAILABLE:
-            orchestrator = OrchestratorAgent()
-            logger.info("Orquestrador inicializado")
-        
-        if CSV_AGENT_AVAILABLE:
-            csv_agent = EmbeddingsAnalysisAgent()
-            logger.info("CSV Agent inicializado")
-            
-        logger.info("Sistema multiagente inicializado com sucesso")
-    except Exception as e:
-        logger.error(f"Erro ao inicializar sistema multiagente: {e}")
-        orchestrator = None
-        csv_agent = None
-        MULTIAGENT_AVAILABLE = Falsea com integração ao sistema multiagente:
-- Orquestrador central para coordenar agentes
-- Análise real de dados CSV com IA
-- Detecção de fraude inteligente
+Sistema multiagente inteligente com integração LLM para análise de NF-e:
+- Agente Especialista em Tributação (NFeTaxSpecialistAgent)
+- Validação de CFOP e NCM
+- Análise fiscal automatizada
+- Detecção de anomalias e inconsistências
 - Sistema de embeddings e RAG
-- Memória persistente
+- Memória persistente e consultas fiscais via LLM
 """
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Request
@@ -113,8 +95,8 @@ API_TIMEOUT = 120  # Timeout de 120 segundos para operações longas
 # Não definir PORT aqui - usar API_HOST e API_PORT de settings.py
 
 app = FastAPI(
-    title="EDA AI Minds - API Completa",
-    description="Sistema multiagente para análise inteligente de dados CSV e NF-e",
+    title="AgentNFe - API Multiagente",
+    description="Sistema multiagente para análise inteligente de Notas Fiscais Eletrônicas (NF-e) com IA",
     version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
