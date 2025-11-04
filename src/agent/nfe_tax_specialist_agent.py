@@ -15,7 +15,7 @@ from src.agent.base_agent import BaseAgent, AgentError
 from src.agent.rag_agent import RAGAgent
 from src.embeddings.generator import EmbeddingProvider
 from src.vectorstore.supabase_client import supabase
-from src.api.sonar_client import send_sonar_query
+from src.llm.langchain_manager import get_langchain_llm_manager
 
 
 class NFeTaxSpecialistAgent(BaseAgent):
@@ -344,20 +344,35 @@ Você domina:
 
 Forneça respostas técnicas, precisas e práticas."""
         
-        full_query = f"{system_prompt}\n\nContexto: {contexto_especializado}\n\nPergunta: {query}"
+        user_query = f"Contexto: {contexto_especializado}\n\nPergunta: {query}"
         
         try:
-            response = send_sonar_query(
-                question=full_query,
-                context={'especialidade': 'tributacao_nfe', 'contexto': contexto_especializado},
-                temperature=0.2  # Baixa temperatura para respostas mais precisas
+            # Usa LangChain LLM Manager com fallback automático (Groq -> Gemini -> OpenAI)
+            from src.llm.langchain_manager import LLMConfig
+            
+            llm_manager = get_langchain_llm_manager()
+            config = LLMConfig(temperature=0.2, max_tokens=1000)
+            
+            # Invoca o LLM com system prompt especializado
+            response = llm_manager.chat(
+                prompt=user_query,
+                system_prompt=system_prompt,
+                config=config
             )
             
-            return {
-                'success': True,
-                'resposta': response,
-                'contexto': contexto_especializado
-            }
+            if response.success:
+                return {
+                    'success': True,
+                    'resposta': response.content,
+                    'contexto': contexto_especializado,
+                    'llm_provider': response.provider.value,
+                    'model': response.model
+                }
+            else:
+                return {
+                    'success': False,
+                    'error': response.error
+                }
             
         except Exception as e:
             self.logger.error(f"Erro na consulta tributária: {str(e)}")

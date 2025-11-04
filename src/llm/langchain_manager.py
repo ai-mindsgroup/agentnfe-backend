@@ -214,7 +214,7 @@ class LangChainLLMManager:
         """Retorna o modelo padrão para cada provedor."""
         defaults = {
             LLMProvider.GROQ: "llama-3.1-8b-instant",
-            LLMProvider.GOOGLE: "gemini-pro",
+            LLMProvider.GOOGLE: "gemini-2.0-flash-exp",  # Modelo Gemini 2.0 Flash experimental
             LLMProvider.OPENAI: "gpt-3.5-turbo"
         }
         return defaults.get(provider, "unknown")
