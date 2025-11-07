@@ -1,0 +1,34 @@
+semantic_search_langchain/
+.env
+*.pyc
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+/.venv/
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+data/creditcard.csv
+__frontend_i2a2mind/
+
+# Google Drive credentials e tokens (SENSÍVEL - NÃO COMMITAR)
+configs/google_drive_credentials.json
+configs/google_drive_token.json
+configs/eda-api-drive-adb150d0f669.json
+
+# Diretórios de processamento (arquivos grandes)
+data/processando/
+data/processado/
+data/*.csv
+data/*
+docs/data-zip-nfe/
+*.csv
+*.zip
+scripts/git-filter-repo.txt
+git-filter-repo.py
+
+# Logs do serviço de ingestão
+logs/auto_ingest.log
+logs/service-*.log
